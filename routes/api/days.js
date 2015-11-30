@@ -29,17 +29,32 @@ router.get('/:number/', function(req, res, next) {
 })
 
 router.post('/:id/:model', function(req, res, next) {
+  console.log('POSTED');
   var model = matchModel[req.params.model];
-  Day.findById(req.params.id)
-  .then(function(day) {
-    res.send("HELLO!")
+
+  model.findOne( { name: req.body.name })
+  .then(function(section) {
+    if (model === Hotel) {
+      var update = {hotel: section._id}
+    }
+    else {
+      var update = {$push: {}};
+      update['$push'][req.params.model] = section._id;
+    }
+    console.log("UPDATE: ", update, "--- END UPDATE ---");
+
+    Day.findByIdAndUpdate(req.params.id, update, {new: true}).exec()
+    .then(function(updatedDay) {
+      console.log(updatedDay);
+      res.json(section);
+    }, console.error)
   })
 })
 
-router.post('/', function(req, res, next) {
+router.post('/create', function(req, res, next) {
   var body = req.body;
-  Day.create(body)
-  res.send(body);
+  var day = Day.create(body)
+  res.json(day);
 })
 
 
