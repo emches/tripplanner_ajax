@@ -24,6 +24,7 @@ $(function () {
 
     $.get( 'api/days/')
     .done(function(mydays){
+        console.log("populated days", mydays)
         var numDays = mydays.length;
         for ( var i = 1 ; i <= numDays ; i++ ) {
             var $newDayButton = createDayButton(i);
@@ -112,6 +113,7 @@ $(function () {
         var currentPlaces = days[currentDay - 1];
         console.log(currentPlaces);
         currentPlaces.forEach(function (place) {
+           // debugger;
             bounds.extend(place.marker.position);
         });
 
@@ -152,16 +154,20 @@ $(function () {
         var sectionName = $this.parent().attr('id').split('-')[0];
         var $listToAppendTo = $('#' + sectionName + '-list').find('ul');
         var placeName = $this.siblings('select').val();
-
+        console.log("days", days)
         var dayId = days[currentDay - 1][0]._id;
         $.post('/api/days/' + dayId + '/' + sectionName, { name: placeName })
         .done(function(placeObj) {
+
           $listToAppendTo.append(createItineraryItem(placeName));
-          mapFit();
+          console.log("PLACE OBJ", placeObj)
 
           var createdMapMarker = drawLocation(map, placeObj.place[0].location, {
               icon: placeMapIcons[sectionName]
           });
+
+          mapFit();
+
         })
 
         // var placeObj = getPlaceObject(sectionName, placeName);
@@ -169,6 +175,7 @@ $(function () {
 
 
         // days[currentDay - 1].push({place: placeObj, marker: createdMapMarker, section: sectionName});
+
 
 
     });

@@ -16,7 +16,9 @@ var matchModel = {
 router.get('/', function(req, res, next) {
   console.log("GOT TO API DAYS ROUTE")
   Day.find()
+  .populate('hotel restaurants activities')
   .then(function(days) {
+    console.log("populated days", days)
     res.send(days)
   })
 })
